@@ -1,0 +1,596 @@
+{
+  "users": [
+    {
+      "elo": 1000,
+      "games_played": 3,
+      "games_won": 0,
+      "created_at": "2026-03-30T17:39:16.854Z",
+      "id": "fed7d596-56ee-4af6-93b3-e15272b15291",
+      "username": "mini",
+      "email": "dubeyminakshi096@gmail.com",
+      "password": "$2a$10$bPBCsad6WDhHz5Frr8GGYeLMsOqegYOXctl4.LBYONOrLdDJCYUnm",
+      "avatar": "⛳"
+    },
+    {
+      "elo": 1025,
+      "games_played": 4,
+      "games_won": 1,
+      "created_at": "2026-03-30T17:40:36.618Z",
+      "id": "769e8aa1-679a-4285-a45e-87253c8991b9",
+      "username": "shreya",
+      "email": "shreya@gmail.com",
+      "password": "$2a$10$.gHBKZoWmTvaKzAPH5i1Re7eo1/TnZsgz.TnltcjxM.anoUq/KqGW",
+      "avatar": "👾"
+    },
+    {
+      "elo": 1025,
+      "games_played": 1,
+      "games_won": 1,
+      "created_at": "2026-03-30T18:26:18.324Z",
+      "id": "6a4ab3cc-a7db-4989-aaec-7fa5dcdb414c",
+      "username": "minakshi",
+      "email": "minakshidubey2004@gmail.com",
+      "password": "$2a$10$Vmh81ZDwM1f1ovOM1CuvruN4u3hEBxhQzdpLVqefyQsl6PHXIediG",
+      "avatar": "🎮"
+    }
+  ],
+  "submissions": [
+    {
+      "created_at": "2026-03-30T18:11:14.854Z",
+      "id": "cf2d9796-9d2d-4e2b-a845-45992340d3cc",
+      "user_id": "fed7d596-56ee-4af6-93b3-e15272b15291",
+      "challenge_id": "fibonacci",
+      "room_id": "GOLF-PCBV",
+      "code": "import sys\ninput_data = sys.stdin.read().strip()\n\n# Your solution here\nprint(input_data)",
+      "language": "python",
+      "char_count": 78,
+      "passed": false
+    },
+    {
+      "created_at": "2026-03-30T18:23:59.128Z",
+      "id": "c4fb6d28-8557-4d65-b2ed-aade4515862d",
+      "user_id": "fed7d596-56ee-4af6-93b3-e15272b15291",
+      "challenge_id": "sum-array",
+      "room_id": "GOLF-ARYL",
+      "code": "import sys\ninput_data = sys.stdin.read().strip()\n\n# Your solution here\nprint(input_data)",
+      "language": "python",
+      "char_count": 78,
+      "passed": false
+    },
+    {
+      "created_at": "2026-04-03T16:00:05.784Z",
+      "id": "dc357ed4-dff8-48eb-b8ab-90978b26f192",
+      "user_id": "769e8aa1-679a-4285-a45e-87253c8991b9",
+      "challenge_id": "fizzbuzz-single",
+      "room_id": "GOLF-6T4Y",
+      "code": "import sys\ninput_data = sys.stdin.read().strip()\n\nn = int(input_data)\n\nif n % 3 == 0 and n % 5 == 0:\n    print(\"FizzBuzz\")\nelif n % 3 == 0:\n    print(\"Fizz\")\nelif n % 5 == 0:\n    print(\"Buzz\")\nelse:\n    print(n)\nprint(input_data)",
+      "language": "python",
+      "char_count": 174,
+      "passed": false
+    },
+    {
+      "created_at": "2026-04-03T16:00:44.302Z",
+      "id": "b0033cac-fbdf-464b-8754-857c2eb7b8ea",
+      "user_id": "769e8aa1-679a-4285-a45e-87253c8991b9",
+      "challenge_id": "fizzbuzz-single",
+      "room_id": "GOLF-6T4Y",
+      "code": "import sys\ninput_data = sys.stdin.read().strip()\n\nn = int(input_data)\n\nif n % 3 == 0 and n % 5 == 0:\n    print(\"FizzBuzz\")\nelif n % 3 == 0:\n    print(\"Fizz\")\nelif n % 5 == 0:\n    print(\"Buzz\")\nelse:\n    print(n)\n",
+      "language": "python",
+      "char_count": 157,
+      "passed": true
+    },
+    {
+      "created_at": "2026-04-03T16:13:37.788Z",
+      "id": "01e8a862-779d-473e-baff-5672c3cf423c",
+      "user_id": "6a4ab3cc-a7db-4989-aaec-7fa5dcdb414c",
+      "challenge_id": "sum-array",
+      "room_id": "GOLF-XEXM",
+      "code": "import sys\nimport json\n\ninput_data = sys.stdin.read().strip()\n\narr = json.loads(input_data)   # Convert JSON string → Python list\n\nprint(sum(arr))",
+      "language": "python",
+      "char_count": 124,
+      "passed": true
+    }
+  ],
+  "rooms": [
+    {
+      "status": "waiting",
+      "created_at": "2026-03-30T18:10:05.468Z",
+      "id": "08073e3c-991b-44d5-8317-6e3f84b82cb1",
+      "code": "GOLF-PCBV",
+      "name": "python war",
+      "host_id": "fed7d596-56ee-4af6-93b3-e15272b15291",
+      "max_players": 2,
+      "round_time": 300
+    },
+    {
+      "status": "waiting",
+      "created_at": "2026-03-30T18:11:42.573Z",
+      "id": "174aa41f-3367-4209-b2e7-0b9d32f4b54c",
+      "code": "GOLF-2ZVS",
+      "name": "python war",
+      "host_id": "fed7d596-56ee-4af6-93b3-e15272b15291",
+      "max_players": 6,
+      "round_time": 300
+    },
+    {
+      "status": "waiting",
+      "created_at": "2026-03-30T18:22:23.290Z",
+      "id": "a55c9d1b-c702-498d-a461-855d5eb25eca",
+      "code": "GOLF-ARYL",
+      "name": "python war",
+      "host_id": "fed7d596-56ee-4af6-93b3-e15272b15291",
+      "max_players": 2,
+      "round_time": 300
+    },
+    {
+      "status": "waiting",
+      "created_at": "2026-03-30T18:24:54.579Z",
+      "id": "0ceb00d3-b234-4ce6-91bd-a731ae95f17d",
+      "code": "GOLF-Q9TR",
+      "name": "python war",
+      "host_id": "fed7d596-56ee-4af6-93b3-e15272b15291",
+      "max_players": 3,
+      "round_time": 300
+    },
+    {
+      "status": "waiting",
+      "created_at": "2026-03-30T18:32:35.911Z",
+      "id": "574a7dc0-25d1-4428-8cb6-f755f41a59a1",
+      "code": "GOLF-WXAG",
+      "name": "python war",
+      "host_id": "6a4ab3cc-a7db-4989-aaec-7fa5dcdb414c",
+      "max_players": 6,
+      "round_time": 300
+    },
+    {
+      "status": "waiting",
+      "created_at": "2026-04-03T15:56:32.241Z",
+      "id": "64749a1e-094f-42ff-8f1b-ca03b4656344",
+      "code": "GOLF-6T4Y",
+      "name": "python war",
+      "host_id": "6a4ab3cc-a7db-4989-aaec-7fa5dcdb414c",
+      "max_players": 6,
+      "round_time": 300
+    },
+    {
+      "status": "waiting",
+      "created_at": "2026-04-03T16:09:46.522Z",
+      "id": "695c8a45-09ce-4125-803d-e28fcdc16368",
+      "code": "GOLF-XEXM",
+      "name": "python war",
+      "host_id": "769e8aa1-679a-4285-a45e-87253c8991b9",
+      "max_players": 6,
+      "round_time": 300
+    },
+    {
+      "status": "waiting",
+      "created_at": "2026-04-03T17:54:36.539Z",
+      "id": "444cd554-aa92-4bc2-aca1-fa5751754265",
+      "code": "GOLF-6FJG",
+      "name": "string war",
+      "host_id": "769e8aa1-679a-4285-a45e-87253c8991b9",
+      "max_players": 6,
+      "round_time": 300,
+      "challenge_id": "anagram-check"
+    }
+  ],
+  "matches": [
+    {
+      "created_at": "2026-04-03T16:15:00.000Z",
+      "id": "match-001",
+      "room_code": "GOLF-XEXM",
+      "room_name": "python war",
+      "challenge": {
+        "id": "sum-array",
+        "title": "Sum of Array",
+        "description": "Given an array of integers, return their sum.",
+        "difficulty": "easy"
+      },
+      "players": [
+        {
+          "id": "769e8aa1-679a-4285-a45e-87253c8991b9",
+          "username": "shreya",
+          "avatar": "👾"
+        },
+        {
+          "id": "6a4ab3cc-a7db-4989-aaec-7fa5dcdb414c",
+          "username": "minakshi",
+          "avatar": "🎮"
+        }
+      ],
+      "leaderboard": [
+        {
+          "userId": "6a4ab3cc-a7db-4989-aaec-7fa5dcdb414c",
+          "username": "minakshi",
+          "avatar": "🎮",
+          "charCount": 124,
+          "language": "python",
+          "solved": true,
+          "attempts": 1
+        },
+        {
+          "userId": "769e8aa1-679a-4285-a45e-87253c8991b9",
+          "username": "shreya",
+          "avatar": "👾",
+          "charCount": null,
+          "language": null,
+          "solved": false,
+          "attempts": 0
+        }
+      ],
+      "solutions": {
+        "6a4ab3cc-a7db-4989-aaec-7fa5dcdb414c": {
+          "code": "import sys\nimport json\n\ninput_data = sys.stdin.read().strip()\n\narr = json.loads(input_data)\n\nprint(sum(arr))",
+          "language": "python",
+          "charCount": 124
+        }
+      },
+      "duration": 180,
+      "winner": {
+        "id": "6a4ab3cc-a7db-4989-aaec-7fa5dcdb414c",
+        "username": "minakshi",
+        "avatar": "🎮",
+        "charCount": 124
+      }
+    },
+    {
+      "created_at": "2026-04-03T16:05:00.000Z",
+      "id": "match-002",
+      "room_code": "GOLF-6T4Y",
+      "room_name": "python war",
+      "challenge": {
+        "id": "fizzbuzz-single",
+        "title": "FizzBuzz Single",
+        "description": "Given a number N, print Fizz, Buzz, FizzBuzz, or the number.",
+        "difficulty": "easy"
+      },
+      "players": [
+        {
+          "id": "769e8aa1-679a-4285-a45e-87253c8991b9",
+          "username": "shreya",
+          "avatar": "👾"
+        },
+        {
+          "id": "fed7d596-56ee-4af6-93b3-e15272b15291",
+          "username": "mini",
+          "avatar": "⛳"
+        }
+      ],
+      "leaderboard": [
+        {
+          "userId": "769e8aa1-679a-4285-a45e-87253c8991b9",
+          "username": "shreya",
+          "avatar": "👾",
+          "charCount": 157,
+          "language": "python",
+          "solved": true,
+          "attempts": 2
+        },
+        {
+          "userId": "fed7d596-56ee-4af6-93b3-e15272b15291",
+          "username": "mini",
+          "avatar": "⛳",
+          "charCount": null,
+          "language": null,
+          "solved": false,
+          "attempts": 1
+        }
+      ],
+      "solutions": {
+        "769e8aa1-679a-4285-a45e-87253c8991b9": {
+          "code": "import sys\ninput_data = sys.stdin.read().strip()\n\nn = int(input_data)\n\nif n % 3 == 0 and n % 5 == 0:\n    print(\"FizzBuzz\")\nelif n % 3 == 0:\n    print(\"Fizz\")\nelif n % 5 == 0:\n    print(\"Buzz\")\nelse:\n    print(n)\n",
+          "language": "python",
+          "charCount": 157
+        }
+      },
+      "duration": 245,
+      "winner": {
+        "id": "769e8aa1-679a-4285-a45e-87253c8991b9",
+        "username": "shreya",
+        "avatar": "👾",
+        "charCount": 157
+      }
+    },
+    {
+      "created_at": "2026-03-30T18:30:00.000Z",
+      "id": "match-003",
+      "room_code": "GOLF-PCBV",
+      "room_name": "python war",
+      "challenge": {
+        "id": "reverse-string",
+        "title": "Reverse a String",
+        "description": "Given a string, return it reversed.",
+        "difficulty": "easy"
+      },
+      "players": [
+        {
+          "id": "fed7d596-56ee-4af6-93b3-e15272b15291",
+          "username": "mini",
+          "avatar": "⛳"
+        },
+        {
+          "id": "769e8aa1-679a-4285-a45e-87253c8991b9",
+          "username": "shreya",
+          "avatar": "👾"
+        }
+      ],
+      "leaderboard": [
+        {
+          "userId": "769e8aa1-679a-4285-a45e-87253c8991b9",
+          "username": "shreya",
+          "avatar": "👾",
+          "charCount": 48,
+          "language": "python",
+          "solved": true,
+          "attempts": 1
+        },
+        {
+          "userId": "fed7d596-56ee-4af6-93b3-e15272b15291",
+          "username": "mini",
+          "avatar": "⛳",
+          "charCount": 65,
+          "language": "python",
+          "solved": true,
+          "attempts": 2
+        }
+      ],
+      "solutions": {
+        "769e8aa1-679a-4285-a45e-87253c8991b9": {
+          "code": "import sys\nprint(sys.stdin.read().strip()[::-1])",
+          "language": "python",
+          "charCount": 48
+        },
+        "fed7d596-56ee-4af6-93b3-e15272b15291": {
+          "code": "import sys\ns=sys.stdin.read().strip()\nprint(s[::-1])",
+          "language": "python",
+          "charCount": 65
+        }
+      },
+      "duration": 120,
+      "winner": {
+        "id": "769e8aa1-679a-4285-a45e-87253c8991b9",
+        "username": "shreya",
+        "avatar": "👾",
+        "charCount": 48
+      }
+    }
+  ],
+  "tournaments": [
+    {
+      "created_at": "2026-04-02T10:00:00.000Z",
+      "id": "tournament-001",
+      "name": "Weekend Byte Bash",
+      "description": "3-round tournament — solve all challenges with the shortest code to claim the ELO prize!",
+      "status": "completed",
+      "host_id": "769e8aa1-679a-4285-a45e-87253c8991b9",
+      "host_name": "shreya",
+      "max_players": 8,
+      "round_time": 300,
+      "num_rounds": 3,
+      "start_date": "2026-04-02T14:00:00.000Z",
+      "players": [
+        {
+          "id": "769e8aa1-679a-4285-a45e-87253c8991b9",
+          "username": "shreya",
+          "avatar": "👾"
+        },
+        {
+          "id": "fed7d596-56ee-4af6-93b3-e15272b15291",
+          "username": "mini",
+          "avatar": "⛳"
+        },
+        {
+          "id": "6a4ab3cc-a7db-4989-aaec-7fa5dcdb414c",
+          "username": "minakshi",
+          "avatar": "🎮"
+        }
+      ],
+      "rounds": [
+        {
+          "round_number": 1,
+          "challenge_id": "reverse-string",
+          "challenge_title": "Reverse a String",
+          "challenge_difficulty": "easy",
+          "status": "completed",
+          "results": [
+            {
+              "userId": "769e8aa1-679a-4285-a45e-87253c8991b9",
+              "username": "shreya",
+              "charCount": 48,
+              "solved": true
+            },
+            {
+              "userId": "fed7d596-56ee-4af6-93b3-e15272b15291",
+              "username": "mini",
+              "charCount": 65,
+              "solved": true
+            },
+            {
+              "userId": "6a4ab3cc-a7db-4989-aaec-7fa5dcdb414c",
+              "username": "minakshi",
+              "charCount": 52,
+              "solved": true
+            }
+          ]
+        },
+        {
+          "round_number": 2,
+          "challenge_id": "fizzbuzz-single",
+          "challenge_title": "FizzBuzz Single",
+          "challenge_difficulty": "easy",
+          "status": "completed",
+          "results": [
+            {
+              "userId": "6a4ab3cc-a7db-4989-aaec-7fa5dcdb414c",
+              "username": "minakshi",
+              "charCount": 140,
+              "solved": true
+            },
+            {
+              "userId": "769e8aa1-679a-4285-a45e-87253c8991b9",
+              "username": "shreya",
+              "charCount": 157,
+              "solved": true
+            },
+            {
+              "userId": "fed7d596-56ee-4af6-93b3-e15272b15291",
+              "username": "mini",
+              "charCount": null,
+              "solved": false
+            }
+          ]
+        },
+        {
+          "round_number": 3,
+          "challenge_id": "count-vowels",
+          "challenge_title": "Count Vowels",
+          "challenge_difficulty": "easy",
+          "status": "completed",
+          "results": [
+            {
+              "userId": "769e8aa1-679a-4285-a45e-87253c8991b9",
+              "username": "shreya",
+              "charCount": 55,
+              "solved": true
+            },
+            {
+              "userId": "6a4ab3cc-a7db-4989-aaec-7fa5dcdb414c",
+              "username": "minakshi",
+              "charCount": 62,
+              "solved": true
+            },
+            {
+              "userId": "fed7d596-56ee-4af6-93b3-e15272b15291",
+              "username": "mini",
+              "charCount": 70,
+              "solved": true
+            }
+          ]
+        }
+      ],
+      "current_round": 3,
+      "standings": [
+        {
+          "userId": "769e8aa1-679a-4285-a45e-87253c8991b9",
+          "username": "shreya",
+          "avatar": "👾",
+          "totalChars": 260,
+          "roundsSolved": 3,
+          "rank": 1
+        },
+        {
+          "userId": "6a4ab3cc-a7db-4989-aaec-7fa5dcdb414c",
+          "username": "minakshi",
+          "avatar": "🎮",
+          "totalChars": 254,
+          "roundsSolved": 3,
+          "rank": 2
+        },
+        {
+          "userId": "fed7d596-56ee-4af6-93b3-e15272b15291",
+          "username": "mini",
+          "avatar": "⛳",
+          "totalChars": 135,
+          "roundsSolved": 2,
+          "rank": 3
+        }
+      ],
+      "elo_pool": 120
+    },
+    {
+      "created_at": "2026-04-03T08:00:00.000Z",
+      "id": "tournament-002",
+      "name": "Neon Code Sprint",
+      "description": "Fast-paced 2-round sprint. Quick thinking, minimal bytes. Are you ready?",
+      "status": "upcoming",
+      "host_id": "6a4ab3cc-a7db-4989-aaec-7fa5dcdb414c",
+      "host_name": "minakshi",
+      "max_players": 16,
+      "round_time": 180,
+      "num_rounds": 2,
+      "start_date": "2026-04-05T18:00:00.000Z",
+      "players": [
+        {
+          "id": "6a4ab3cc-a7db-4989-aaec-7fa5dcdb414c",
+          "username": "minakshi",
+          "avatar": "🎮"
+        },
+        {
+          "id": "769e8aa1-679a-4285-a45e-87253c8991b9",
+          "username": "shreya",
+          "avatar": "👾"
+        }
+      ],
+      "rounds": [
+        {
+          "round_number": 1,
+          "challenge_id": "palindrome-check",
+          "challenge_title": "Palindrome Check",
+          "challenge_difficulty": "medium",
+          "status": "pending",
+          "results": []
+        },
+        {
+          "round_number": 2,
+          "challenge_id": "max-element",
+          "challenge_title": "Maximum Element",
+          "challenge_difficulty": "easy",
+          "status": "pending",
+          "results": []
+        }
+      ],
+      "current_round": 0,
+      "standings": [],
+      "elo_pool": 240
+    },
+    {
+      "created_at": "2026-04-03T12:00:00.000Z",
+      "id": "tournament-003",
+      "name": "Midnight Minimalist",
+      "description": "3 rounds of pure code golf under the neon lights. Fewest total bytes wins the crown.",
+      "status": "upcoming",
+      "host_id": "fed7d596-56ee-4af6-93b3-e15272b15291",
+      "host_name": "mini",
+      "max_players": 8,
+      "round_time": 300,
+      "num_rounds": 3,
+      "start_date": "2026-04-06T00:00:00.000Z",
+      "players": [
+        {
+          "id": "fed7d596-56ee-4af6-93b3-e15272b15291",
+          "username": "mini",
+          "avatar": "⛳"
+        }
+      ],
+      "rounds": [
+        {
+          "round_number": 1,
+          "challenge_id": "fibonacci",
+          "challenge_title": "Nth Fibonacci",
+          "challenge_difficulty": "medium",
+          "status": "pending",
+          "results": []
+        },
+        {
+          "round_number": 2,
+          "challenge_id": "remove-duplicates",
+          "challenge_title": "Remove Duplicates",
+          "challenge_difficulty": "medium",
+          "status": "pending",
+          "results": []
+        },
+        {
+          "round_number": 3,
+          "challenge_id": "sum-array",
+          "challenge_title": "Sum of Array",
+          "challenge_difficulty": "easy",
+          "status": "pending",
+          "results": []
+        }
+      ],
+      "current_round": 0,
+      "standings": [],
+      "elo_pool": 120
+    }
+  ]
+}
