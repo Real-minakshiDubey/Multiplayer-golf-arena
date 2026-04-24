@@ -4,14 +4,14 @@ import path from 'path';
 import os from 'os';
 import { randomUUID } from 'crypto';
 
-// Language configs: cmd to run a file
+// Language configs mapping to lightweight Alpine Docker images
 const LANGUAGE_CONFIG = {
-  python: { cmd: 'python', ext: '.py' },
-  javascript: { cmd: 'node', ext: '.js' },
-  typescript: { cmd: 'node', ext: '.js' },
-  ruby: { cmd: 'ruby', ext: '.rb' },
-  lua: { cmd: 'lua', ext: '.lua' },
-  php: { cmd: 'php', ext: '.php' }
+  python: { image: 'python:3.10-alpine', cmd: 'python', ext: '.py' },
+  javascript: { image: 'node:20-alpine', cmd: 'node', ext: '.js' },
+  typescript: { image: 'node:20-alpine', cmd: 'node', ext: '.js' }, 
+  ruby: { image: 'ruby:3.2-alpine', cmd: 'ruby', ext: '.rb' },
+  lua: { image: 'nickblah/lua:5.4-alpine', cmd: 'lua', ext: '.lua' },
+  php: { image: 'php:8.2-cli-alpine', cmd: 'php', ext: '.php' }
 };
 
 export async function executeCode(code, language, input = '') {
@@ -20,11 +20,11 @@ export async function executeCode(code, language, input = '') {
     return {
       success: false,
       output: '',
-      error: `Language "${language}" is not supported for local execution.`
+      error: `Language "${language}" is not supported for sandboxed execution.`
     };
   }
 
-  // Write code to a temp file
+  // Write code to a temp file on the host machine
   const tmpDir = os.tmpdir();
   const fileName = `golf_${randomUUID()}${config.ext}`;
   const filePath = path.join(tmpDir, fileName);
@@ -42,9 +42,23 @@ export async function executeCode(code, language, input = '') {
     let killed = false;
 
     try {
-      const proc = spawn(config.cmd, [filePath], {
-        stdio: ['pipe', 'pipe', 'pipe'],
-        shell: process.platform === 'win32'
+      // Map the local file into the docker container at /app
+      // Use strict isolation: no network, 128MB RAM max, read-only root FS
+      const dockerArgs = [
+        'run',
+        '--rm',                     // Automatically remove container when done
+        '-i',                       // Interactive (keep STDIN open)
+        '--net=none',               // Disable networking (crucial for security)
+        '--memory=128m',            // Limit RAM usage to 128MB
+        '--cpus=0.5',               // Limit to half a CPU core
+        `-v`, `${filePath}:/app/${fileName}:ro`, // Mount file as read-only
+        '-w', '/app',               // Set working directory
+        config.image,               // Use the specific language Docker image
+        config.cmd, fileName        // Command to run inside the container
+      ];
+
+      const proc = spawn('docker', dockerArgs, {
+        stdio: ['pipe', 'pipe', 'pipe']
       });
 
       proc.stdout.on('data', (data) => {
@@ -69,7 +83,7 @@ export async function executeCode(code, language, input = '') {
 
       proc.on('close', (exitCode) => {
         clearTimeout(timer);
-        // Clean up temp file
+        // Clean up temp file from host
         try { fs.unlinkSync(filePath); } catch (e) { /* ignore */ }
 
         if (killed) {
@@ -78,7 +92,12 @@ export async function executeCode(code, language, input = '') {
         }
 
         if (exitCode !== 0) {
-          resolve({ success: false, output: stdout.trim(), error: stderr.trim() });
+          // If the image doesn't exist locally, docker pull might fail or take too long
+          if (stderr.includes('Unable to find image')) {
+             resolve({ success: false, output: stdout.trim(), error: `Docker image ${config.image} not found locally. Please run: docker pull ${config.image}` });
+          } else {
+             resolve({ success: false, output: stdout.trim(), error: stderr.trim() });
+          }
         } else {
           resolve({ success: true, output: stdout.trim(), error: '' });
         }
@@ -90,7 +109,7 @@ export async function executeCode(code, language, input = '') {
         resolve({
           success: false,
           output: '',
-          error: `Failed to run ${language}: ${err.message}. Make sure the runtime is installed.`
+          error: `Failed to run Docker: ${err.message}. Ensure Docker is installed and running.`
         });
       });
     } catch (err) {

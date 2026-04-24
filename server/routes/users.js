@@ -4,17 +4,26 @@ import { authenticate } from '../middleware/auth.js';
 
 const router = Router();
 
-router.get('/me', authenticate, (req, res) => {
-  const user = db.findUserById(req.user.id);
-  if (!user) return res.status(404).json({ error: 'User not found' });
+router.get('/me', authenticate, async (req, res) => {
+  try {
+    const user = await db.findUserById(req.user.id);
+    if (!user) return res.status(404).json({ error: 'User not found' });
 
-  const { password, ...safeUser } = user;
-  res.json(safeUser);
+    // Since Mongoose doc, we might need to use .toObject() or just rely on the virtuals we set up
+    const safeUser = user.toJSON ? user.toJSON() : user;
+    res.json(safeUser);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-router.get('/leaderboard', (req, res) => {
-  const leaderboard = db.getLeaderboard(50);
-  res.json(leaderboard);
+router.get('/leaderboard', async (req, res) => {
+  try {
+    const leaderboard = await db.getLeaderboard(50);
+    res.json(leaderboard);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 export default router;

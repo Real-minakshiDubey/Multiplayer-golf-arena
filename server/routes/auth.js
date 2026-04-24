@@ -16,7 +16,7 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ error: 'All fields are required' });
     }
 
-    const existing = db.findUserByUsernameOrEmail(username, email);
+    const existing = await db.findUserByUsernameOrEmail(username, email);
     if (existing) {
       return res.status(400).json({ error: 'Username or email already exists' });
     }
@@ -25,8 +25,7 @@ router.post('/register', async (req, res) => {
     const id = uuid();
     const avatar = AVATARS[Math.floor(Math.random() * AVATARS.length)];
 
-    const user = db.createUser({
-      id,
+    const user = await db.createUser({
       username,
       email,
       password: hashedPassword,
@@ -34,7 +33,7 @@ router.post('/register', async (req, res) => {
     });
 
     const token = jwt.sign(
-      { id, username, avatar },
+      { id: user.id, username, avatar },
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
@@ -63,7 +62,7 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ error: 'Email and password required' });
     }
 
-    const user = db.findUserByEmail(email);
+    const user = await db.findUserByEmail(email);
     if (!user) {
       return res.status(400).json({ error: 'Invalid credentials' });
     }

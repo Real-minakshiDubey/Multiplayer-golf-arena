@@ -41,9 +41,9 @@ export function handleGame(io, socket) {
       startTime: room.startTime
     });
 
-    setTimeout(() => {
+    setTimeout(async () => {
       if (room.status === 'playing') {
-        endGame(io, room, roomCode);
+        await endGame(io, room, roomCode);
       }
     }, room.roundTime * 1000);
 
@@ -85,9 +85,8 @@ export function handleGame(io, socket) {
       }
       room.submissions[socket.user.id].push(submission);
 
-      // Save to JSON DB
-      db.createSubmission({
-        id: uuid(),
+      // Save to MongoDB
+      await db.createSubmission({
         user_id: socket.user.id,
         challenge_id: room.challenge.id,
         room_id: roomCode,
@@ -147,10 +146,10 @@ export function handleGame(io, socket) {
     }
   });
 
-  socket.on('force-end', ({ roomCode }) => {
+  socket.on('force-end', async ({ roomCode }) => {
     const room = rooms.get(roomCode);
     if (!room || room.host.id !== socket.user.id) return;
-    endGame(io, room, roomCode);
+    await endGame(io, room, roomCode);
   });
 }
 
@@ -195,19 +194,19 @@ function buildLeaderboard(room) {
   return board;
 }
 
-function endGame(io, room, roomCode) {
+async function endGame(io, room, roomCode) {
   room.status = 'finished';
   const leaderboard = buildLeaderboard(room);
 
   // Update stats
   if (leaderboard.length > 0 && leaderboard[0].solved) {
     const winnerId = leaderboard[0].userId;
-    db.incrementUserField(winnerId, 'games_won', 1);
-    db.incrementUserField(winnerId, 'elo', 25);
+    await db.incrementUserField(winnerId, 'games_won', 1);
+    await db.incrementUserField(winnerId, 'elo', 25);
   }
 
   for (const player of room.players) {
-    db.incrementUserField(player.id, 'games_played', 1);
+    await db.incrementUserField(player.id, 'games_played', 1);
   }
 
   const solutions = {};
@@ -230,9 +229,7 @@ function endGame(io, room, roomCode) {
   });
 
   // Save match record for replays
-  const matchId = uuid();
-  db.createMatch({
-    id: matchId,
+  await db.createMatch({
     room_code: roomCode,
     room_name: room.name,
     challenge: {
@@ -257,7 +254,7 @@ function endGame(io, room, roomCode) {
     } : null
   });
 
-  console.log(`🏁 Game ended in ${roomCode} — Match saved: ${matchId}`);
+  console.log(`🏁 Game ended in ${roomCode} — Match saved`);
 
   setTimeout(() => rooms.delete(roomCode), 300000);
 }

@@ -36,22 +36,25 @@ router.get('/', (req, res) => {
   res.json(liveRooms);
 });
 
-router.post('/', authenticate, (req, res) => {
-  const { name, maxPlayers = 6, roundTime = 300, challengeId } = req.body;
-  const id = uuid();
-  const code = generateRoomCode();
+router.post('/', authenticate, async (req, res) => {
+  try {
+    const { name, maxPlayers = 6, roundTime = 300, challengeId } = req.body;
+    const code = generateRoomCode();
 
-  const room = db.createRoom({
-    id,
-    code,
-    name: name || `${req.user.username}'s Room`,
-    host_id: req.user.id,
-    max_players: maxPlayers,
-    round_time: roundTime,
-    challenge_id: challengeId || null
-  });
+    const room = await db.createRoom({
+      code,
+      name: name || `${req.user.username}'s Room`,
+      host_id: req.user.id,
+      max_players: maxPlayers,
+      round_time: roundTime,
+      challenge_id: challengeId || null
+    });
 
-  res.json(room);
+    res.json(room);
+  } catch (err) {
+    console.error('Room creation error:', err);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 export default router;

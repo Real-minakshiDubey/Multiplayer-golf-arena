@@ -1,227 +1,133 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const DB_PATH = path.join(__dirname, '..', 'data', 'db.json');
-const DATA_DIR = path.join(__dirname, '..', 'data');
-
-// Default empty database
-const DEFAULT_DB = {
-  users: [],
-  submissions: [],
-  rooms: [],
-  matches: [],
-  tournaments: []
-};
-
-function ensureDataDir() {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
-  }
-}
-
-function readDB() {
-  ensureDataDir();
-  try {
-    if (!fs.existsSync(DB_PATH)) {
-      fs.writeFileSync(DB_PATH, JSON.stringify(DEFAULT_DB, null, 2));
-      return { ...DEFAULT_DB };
-    }
-    const raw = fs.readFileSync(DB_PATH, 'utf-8');
-    return JSON.parse(raw);
-  } catch (err) {
-    console.error('DB read error, resetting:', err.message);
-    fs.writeFileSync(DB_PATH, JSON.stringify(DEFAULT_DB, null, 2));
-    return { ...DEFAULT_DB };
-  }
-}
-
-function writeDB(data) {
-  ensureDataDir();
-  fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2));
-}
-
-// ─── Query helpers (mimic simple SQL) ───
+import mongoose from 'mongoose';
+import { User } from '../models/User.js';
+import { Submission } from '../models/Submission.js';
+import { Room } from '../models/Room.js';
+import { Match } from '../models/Match.js';
+import { Tournament } from '../models/Tournament.js';
 
 export const db = {
   // ── USERS ──
-  findUserByEmail(email) {
-    const data = readDB();
-    return data.users.find(u => u.email === email) || null;
+  async findUserByEmail(email) {
+    return await User.findOne({ email });
   },
 
-  findUserById(id) {
-    const data = readDB();
-    return data.users.find(u => u.id === id) || null;
+  async findUserById(id) {
+    return await User.findById(id);
   },
 
-  findUserByUsername(username) {
-    const data = readDB();
-    return data.users.find(u => u.username === username) || null;
+  async findUserByUsername(username) {
+    return await User.findOne({ username });
   },
 
-  findUserByUsernameOrEmail(username, email) {
-    const data = readDB();
-    return data.users.find(u => u.username === username || u.email === email) || null;
+  async findUserByUsernameOrEmail(username, email) {
+    return await User.findOne({ $or: [{ username }, { email }] });
   },
 
-  createUser(user) {
-    const data = readDB();
-    const newUser = {
-      elo: 1000,
-      games_played: 0,
-      games_won: 0,
-      created_at: new Date().toISOString(),
-      ...user
-    };
-    data.users.push(newUser);
-    writeDB(data);
+  async createUser(user) {
+    const newUser = new User(user);
+    await newUser.save();
     return newUser;
   },
 
-  updateUser(id, updates) {
-    const data = readDB();
-    const index = data.users.findIndex(u => u.id === id);
-    if (index === -1) return null;
-    data.users[index] = { ...data.users[index], ...updates };
-    writeDB(data);
-    return data.users[index];
+  async updateUser(id, updates) {
+    return await User.findByIdAndUpdate(id, updates, { new: true });
   },
 
-  incrementUserField(id, field, amount = 1) {
-    const data = readDB();
-    const user = data.users.find(u => u.id === id);
-    if (!user) return;
-    user[field] = (user[field] || 0) + amount;
-    writeDB(data);
+  async incrementUserField(id, field, amount = 1) {
+    return await User.findByIdAndUpdate(id, { $inc: { [field]: amount } });
   },
 
-  getLeaderboard(limit = 50) {
-    const data = readDB();
-    return data.users
-      .map(({ password, ...rest }) => rest)
-      .sort((a, b) => b.elo - a.elo)
-      .slice(0, limit);
+  async getLeaderboard(limit = 50) {
+    return await User.find({}, '-password')
+      .sort({ elo: -1 })
+      .limit(limit);
   },
 
   // ── SUBMISSIONS ──
-  createSubmission(submission) {
-    const data = readDB();
-    const newSub = {
-      created_at: new Date().toISOString(),
-      ...submission
-    };
-    data.submissions.push(newSub);
-    writeDB(data);
+  async createSubmission(submission) {
+    const newSub = new Submission(submission);
+    await newSub.save();
     return newSub;
   },
 
-  getSubmissionsByUser(userId) {
-    const data = readDB();
-    return data.submissions.filter(s => s.user_id === userId);
+  async getSubmissionsByUser(userId) {
+    return await Submission.find({ user_id: userId });
   },
 
-  getBestSubmission(userId, challengeId) {
-    const data = readDB();
-    const passed = data.submissions.filter(
-      s => s.user_id === userId && s.challenge_id === challengeId && s.passed
-    );
-    if (passed.length === 0) return null;
-    return passed.reduce((a, b) => a.char_count < b.char_count ? a : b);
+  async getBestSubmission(userId, challengeId) {
+    return await Submission.findOne({ user_id: userId, challenge_id: challengeId, passed: true })
+      .sort({ char_count: 1 });
   },
 
-  getSolvedChallengeIds(userId) {
-    const data = readDB();
-    const solved = data.submissions.filter(s => s.user_id === userId && s.passed);
+  async getSolvedChallengeIds(userId) {
+    const solved = await Submission.find({ user_id: userId, passed: true }).select('challenge_id');
     return [...new Set(solved.map(s => s.challenge_id))];
   },
 
   // ── ROOMS ──
-  createRoom(room) {
-    const data = readDB();
-    const newRoom = {
-      status: 'waiting',
-      created_at: new Date().toISOString(),
-      ...room
-    };
-    data.rooms.push(newRoom);
-    writeDB(data);
+  async createRoom(room) {
+    const newRoom = new Room(room);
+    await newRoom.save();
     return newRoom;
   },
 
-  getWaitingRooms() {
-    const data = readDB();
-    return data.rooms.filter(r => r.status === 'waiting');
+  async getWaitingRooms() {
+    return await Room.find({ status: 'waiting' });
   },
 
-  updateRoom(id, updates) {
-    const data = readDB();
-    const index = data.rooms.findIndex(r => r.id === id);
-    if (index === -1) return null;
-    data.rooms[index] = { ...data.rooms[index], ...updates };
-    writeDB(data);
-    return data.rooms[index];
+  async updateRoom(id, updates) {
+    return await Room.findByIdAndUpdate(id, updates, { new: true });
   },
 
   // ── MATCHES ──
-  createMatch(match) {
-    const data = readDB();
-    const newMatch = {
-      created_at: new Date().toISOString(),
-      ...match
-    };
-    data.matches.push(newMatch);
-    writeDB(data);
+  async createMatch(match) {
+    const newMatch = new Match(match);
+    await newMatch.save();
     return newMatch;
   },
 
-  getMatches(limit = 20) {
-    const data = readDB();
-    return data.matches
-      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-      .slice(0, limit);
+  async getMatches(limit = 20) {
+    return await Match.find()
+      .sort({ created_at: -1 })
+      .limit(limit);
   },
 
-  getMatchById(id) {
-    const data = readDB();
-    return data.matches.find(m => m.id === id) || null;
+  async getMatchById(id) {
+    return await Match.findById(id);
   },
 
   // ── TOURNAMENTS ──
-  createTournament(tournament) {
-    const data = readDB();
-    const newTournament = {
-      created_at: new Date().toISOString(),
-      ...tournament
-    };
-    data.tournaments.push(newTournament);
-    writeDB(data);
+  async createTournament(tournament) {
+    const newTournament = new Tournament(tournament);
+    await newTournament.save();
     return newTournament;
   },
 
-  getTournaments() {
-    const data = readDB();
-    return data.tournaments.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  async getTournaments() {
+    return await Tournament.find().sort({ created_at: -1 });
   },
 
-  getTournamentById(id) {
-    const data = readDB();
-    return data.tournaments.find(t => t.id === id) || null;
+  async getTournamentById(id) {
+    return await Tournament.findById(id);
   },
 
-  updateTournament(id, updates) {
-    const data = readDB();
-    const index = data.tournaments.findIndex(t => t.id === id);
-    if (index === -1) return null;
-    data.tournaments[index] = { ...data.tournaments[index], ...updates };
-    writeDB(data);
-    return data.tournaments[index];
+  async updateTournament(id, updates) {
+    return await Tournament.findByIdAndUpdate(id, updates, { new: true });
   }
 };
 
-export function initDB() {
-  ensureDataDir();
-  readDB(); // Creates file if not exists
-  console.log('✅ JSON Database initialized at', DB_PATH);
+export async function initDB() {
+  try {
+    const uri = process.env.MONGO_URI;
+    if (!uri) {
+      console.warn('⚠️ MONGO_URI is missing in .env. Falling back to local MongoDB.');
+    }
+    const connectionString = uri || 'mongodb://localhost:27017/golf-arena';
+    
+    await mongoose.connect(connectionString);
+    console.log('✅ Connected to MongoDB Database');
+  } catch (err) {
+    console.error('❌ MongoDB Connection Error:', err.message);
+    process.exit(1); // Exit process with failure
+  }
 }

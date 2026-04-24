@@ -2,7 +2,7 @@
   "users": [
     {
       "elo": 1000,
-      "games_played": 3,
+      "games_played": 4,
       "games_won": 0,
       "created_at": "2026-03-30T17:39:16.854Z",
       "id": "fed7d596-56ee-4af6-93b3-e15272b15291",
@@ -24,7 +24,7 @@
     },
     {
       "elo": 1025,
-      "games_played": 1,
+      "games_played": 2,
       "games_won": 1,
       "created_at": "2026-03-30T18:26:18.324Z",
       "id": "6a4ab3cc-a7db-4989-aaec-7fa5dcdb414c",
@@ -32,6 +32,28 @@
       "email": "minakshidubey2004@gmail.com",
       "password": "$2a$10$Vmh81ZDwM1f1ovOM1CuvruN4u3hEBxhQzdpLVqefyQsl6PHXIediG",
       "avatar": "🎮"
+    },
+    {
+      "elo": 1000,
+      "games_played": 0,
+      "games_won": 0,
+      "created_at": "2026-04-22T18:04:45.989Z",
+      "id": "747ae45f-50a6-44cc-b8f9-0622644f9cf2",
+      "username": "Shiv",
+      "email": "shiv@gmail.com",
+      "password": "$2a$10$kbM2072qiNw8ZKKYuEn44uIksIbIM6BLKISfIssvptQhks8XSCwS6",
+      "avatar": "⛳"
+    },
+    {
+      "elo": 1000,
+      "games_played": 1,
+      "games_won": 0,
+      "created_at": "2026-04-22T18:14:32.315Z",
+      "id": "c1c4fc40-2731-4195-b376-de7741a030ce",
+      "username": "minion",
+      "email": "minion@gmail.com",
+      "password": "$2a$10$vQn.RUu5PSXZoq31KWQSqODuZrV2acqsxyc2z2jjnbEBufK71Cn9m",
+      "avatar": "🔥"
     }
   ],
   "submissions": [
@@ -172,6 +194,39 @@
       "max_players": 6,
       "round_time": 300,
       "challenge_id": "anagram-check"
+    },
+    {
+      "status": "waiting",
+      "created_at": "2026-04-22T18:01:30.014Z",
+      "id": "63e21bd0-ce05-4e92-8fb8-b292b6ba2a1e",
+      "code": "GOLF-DF8Z",
+      "name": "python war",
+      "host_id": "fed7d596-56ee-4af6-93b3-e15272b15291",
+      "max_players": 4,
+      "round_time": 300,
+      "challenge_id": null
+    },
+    {
+      "status": "waiting",
+      "created_at": "2026-04-22T18:05:56.412Z",
+      "id": "67b26957-33a8-4ec2-b8db-35231b42a8a8",
+      "code": "GOLF-XSUC",
+      "name": "python war",
+      "host_id": "747ae45f-50a6-44cc-b8f9-0622644f9cf2",
+      "max_players": 6,
+      "round_time": 300,
+      "challenge_id": null
+    },
+    {
+      "status": "waiting",
+      "created_at": "2026-04-22T18:17:28.336Z",
+      "id": "33510aff-e983-41f2-ad28-198e1fd11906",
+      "code": "GOLF-36J7",
+      "name": "Two Sum (Sorted) Arena",
+      "host_id": "747ae45f-50a6-44cc-b8f9-0622644f9cf2",
+      "max_players": 6,
+      "round_time": 300,
+      "challenge_id": "two-sum-sorted"
     }
   ],
   "matches": [
@@ -353,6 +408,67 @@
         "avatar": "👾",
         "charCount": 48
       }
+    },
+    {
+      "created_at": "2026-04-22T18:21:02.750Z",
+      "id": "c72b76ec-361b-42ec-a4f4-42f9c13b5e7c",
+      "room_code": "GOLF-XSUC",
+      "room_name": "python war",
+      "challenge": {
+        "id": "lis-length",
+        "title": "Longest Increasing Subsequence",
+        "description": "Given a JSON array of integers, find the length of the longest strictly increasing subsequence.",
+        "difficulty": "hard"
+      },
+      "players": [
+        {
+          "id": "fed7d596-56ee-4af6-93b3-e15272b15291",
+          "username": "mini",
+          "avatar": "⛳"
+        },
+        {
+          "id": "6a4ab3cc-a7db-4989-aaec-7fa5dcdb414c",
+          "username": "minakshi",
+          "avatar": "🎮"
+        },
+        {
+          "id": "c1c4fc40-2731-4195-b376-de7741a030ce",
+          "username": "minion",
+          "avatar": "🔥"
+        }
+      ],
+      "leaderboard": [
+        {
+          "userId": "fed7d596-56ee-4af6-93b3-e15272b15291",
+          "username": "mini",
+          "avatar": "⛳",
+          "charCount": null,
+          "language": null,
+          "solved": false,
+          "attempts": 0
+        },
+        {
+          "userId": "6a4ab3cc-a7db-4989-aaec-7fa5dcdb414c",
+          "username": "minakshi",
+          "avatar": "🎮",
+          "charCount": null,
+          "language": null,
+          "solved": false,
+          "attempts": 0
+        },
+        {
+          "userId": "c1c4fc40-2731-4195-b376-de7741a030ce",
+          "username": "minion",
+          "avatar": "🔥",
+          "charCount": null,
+          "language": null,
+          "solved": false,
+          "attempts": 0
+        }
+      ],
+      "solutions": {},
+      "duration": 300,
+      "winner": null
     }
   ],
   "tournaments": [

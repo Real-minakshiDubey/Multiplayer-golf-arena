@@ -8,21 +8,33 @@ import { v4 as uuid } from 'uuid';
 const router = Router();
 
 // Get current user's submissions
-router.get('/me', authenticate, (req, res) => {
-  const submissions = db.getSubmissionsByUser(req.user.id);
-  res.json(submissions);
+router.get('/me', authenticate, async (req, res) => {
+  try {
+    const submissions = await db.getSubmissionsByUser(req.user.id);
+    res.json(submissions);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Get solved challenge IDs for current user
-router.get('/solved', authenticate, (req, res) => {
-  const solvedIds = db.getSolvedChallengeIds(req.user.id);
-  res.json(solvedIds);
+router.get('/solved', authenticate, async (req, res) => {
+  try {
+    const solvedIds = await db.getSolvedChallengeIds(req.user.id);
+    res.json(solvedIds);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Get best submission for a specific challenge
-router.get('/best/:challengeId', authenticate, (req, res) => {
-  const best = db.getBestSubmission(req.user.id, req.params.challengeId);
-  res.json(best);
+router.get('/best/:challengeId', authenticate, async (req, res) => {
+  try {
+    const best = await db.getBestSubmission(req.user.id, req.params.challengeId);
+    res.json(best);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Submit practice solution
@@ -40,8 +52,7 @@ router.post('/practice', authenticate, async (req, res) => {
     const charCount = code.replace(/\s/g, '').length;
 
     // Save submission to DB
-    db.createSubmission({
-      id: uuid(),
+    await db.createSubmission({
       user_id: req.user.id,
       challenge_id: challengeId,
       room_id: 'practice',
