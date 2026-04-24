@@ -30,8 +30,8 @@ export default function App() {
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/problems" element={<Problems />} />
         <Route path="/problems/:id" element={<ProblemDetail />} />
-        <Route path="/replays" element={<Replays />} />
-        <Route path="/replays/:matchId" element={<ReplayDetail />} />
+        <Route path="/replays" element={<ProtectedRoute><Replays /></ProtectedRoute>} />
+        <Route path="/replays/:matchId" element={<ProtectedRoute><ReplayDetail /></ProtectedRoute>} />
         <Route path="/tournaments" element={<Tournaments />} />
         <Route path="/tournaments/create" element={<ProtectedRoute><CreateTournament /></ProtectedRoute>} />
         <Route path="/tournaments/:id" element={<TournamentDetail />} />

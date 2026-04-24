@@ -2,6 +2,17 @@
 
 Welcome to **Multiplayer Code Golf Arena**! This is a real-time, competitive platform where developers go head-to-head to solve coding challenges using the shortest and most efficient code possible. "Code Golf" is a recreational programming competition where the goal is to achieve the shortest possible source code that implements a specific algorithm.
 
+## 🚀 Latest Updates: Premium UI & Reliability
+We've recently overhauled the platform with a high-impact design and improved developer reliability:
+- **Premium Facelift:** Completely redesigned **Leaderboard** and **User Profiles** using glassmorphism, dynamic animations (Framer Motion), and **Lucide-React** iconography.
+- **Top-Tier Leaderboards:** Visualized the top players with a new animated **Podium** system.
+- **Smart Data Fallback:** Implemented a 3-tier database architecture:
+  1. **MongoDB Atlas** (Production)
+  2. **Local MongoDB** (Local Dev)
+  3. **Local JSON** (Offline Mode) - The app now works even without a running database!
+- **Strict Auth Guarding:** All entry points are now explicitly guarded to ensure a secure user experience.
+
+
 ## 🚀 Features
 
 ### 1. Real-Time Multiplayer Matches
@@ -42,8 +53,11 @@ Welcome to **Multiplayer Code Golf Arena**! This is a real-time, competitive pla
 - **Authentication:** JSON Web Tokens (JWT) for secure, stateless user sessions.
 
 ### **Database**
+- **Architecture:** 3-Tier Smart Fallback (Atlas → Local → JSON).
 - **Primary Database:** [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) (Cloud NoSQL Database).
-- **ODM:** [Mongoose](https://mongoosejs.com/) for structured data modeling (Users, Matches, Rooms, Submissions, Tournaments).
+- **ODM:** [Mongoose](https://mongoosejs.com/) for structured data modeling.
+- **Offline Support:** Local `db.json` synchronization for development without a live DB connection.
+
 
 ---
 

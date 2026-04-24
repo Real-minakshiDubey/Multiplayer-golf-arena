@@ -8,7 +8,8 @@ export const LANGUAGES = [
   { id: 'cpp', name: 'C++', icon: '➕' },
   { id: 'typescript', name: 'TypeScript', icon: '🔷' },
   { id: 'lua', name: 'Lua', icon: '🌙' },
-  { id: 'php', name: 'PHP', icon: '🐘' }
+  { id: 'php', name: 'PHP', icon: '🐘' },
+  { id: 'bash', name: 'Bash', icon: '🐚' }
 ];
 
 export const STARTER_CODE = {
@@ -21,5 +22,6 @@ export const STARTER_CODE = {
   cpp: '#include<iostream>\nusing namespace std;\nint main(){string s;getline(cin,s);cout<<s;return 0;}',
   typescript: 'const input = require("fs").readFileSync("/dev/stdin","utf8").trim();\nconsole.log(input);',
   lua: 'local input = io.read("*a"):match("^%s*(.-)%s*$")\nprint(input)',
-  php: '<?php $input = trim(fgets(STDIN)); echo $input;'
+  php: '<?php $input = trim(fgets(STDIN)); echo $input;',
+  bash: '# Read input from stdin\nread input\n\n# Your solution here\necho $input'
 };

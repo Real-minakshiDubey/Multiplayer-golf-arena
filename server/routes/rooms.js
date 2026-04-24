@@ -15,7 +15,7 @@ function generateRoomCode() {
   return code;
 }
 
-router.get('/', (req, res) => {
+router.get('/', authenticate, (req, res) => {
   // Use in-memory socket rooms as the source of truth (not stale db.json)
   const liveRooms = [];
   for (const [code, room] of socketRooms.entries()) {

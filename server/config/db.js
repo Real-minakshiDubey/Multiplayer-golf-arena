@@ -1,9 +1,30 @@
 import mongoose from 'mongoose';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { User } from '../models/User.js';
 import { Submission } from '../models/Submission.js';
 import { Room } from '../models/Room.js';
 import { Match } from '../models/Match.js';
 import { Tournament } from '../models/Tournament.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const DB_JSON_PATH = path.join(__dirname, '../data/db.json');
+
+let useJsonFallback = false;
+let localJsonData = null;
+
+function getJsonData() {
+  if (localJsonData) return localJsonData;
+  try {
+    const data = fs.readFileSync(DB_JSON_PATH, 'utf-8');
+    localJsonData = JSON.parse(data);
+    return localJsonData;
+  } catch (err) {
+    console.error('❌ Failed to read db.json:', err.message);
+    return { users: [], submissions: [], rooms: [], matches: [], tournaments: [] };
+  }
+}
 
 export const db = {
   // ── USERS ──
@@ -12,6 +33,10 @@ export const db = {
   },
 
   async findUserById(id) {
+    if (useJsonFallback) {
+      const data = getJsonData();
+      return data.users.find(u => u.id === id);
+    }
     return await User.findById(id);
   },
 
@@ -38,6 +63,13 @@ export const db = {
   },
 
   async getLeaderboard(limit = 50) {
+    if (useJsonFallback) {
+      const data = getJsonData();
+      return [...data.users]
+        .sort((a, b) => b.elo - a.elo)
+        .slice(0, limit)
+        .map(u => ({ ...u, id: u.id }));
+    }
     return await User.find({}, '-password')
       .sort({ elo: -1 })
       .limit(limit);
@@ -117,17 +149,33 @@ export const db = {
 };
 
 export async function initDB() {
+  const uri = process.env.MONGO_URI;
+  const localUri = 'mongodb://localhost:27017/golf-arena';
+  
   try {
-    const uri = process.env.MONGO_URI;
     if (!uri) {
-      console.warn('⚠️ MONGO_URI is missing in .env. Falling back to local MongoDB.');
+      console.warn('⚠️ MONGO_URI is missing in .env. Using local MongoDB.');
+      await mongoose.connect(localUri);
+    } else {
+      await mongoose.connect(uri);
     }
-    const connectionString = uri || 'mongodb://localhost:27017/golf-arena';
-    
-    await mongoose.connect(connectionString);
     console.log('✅ Connected to MongoDB Database');
   } catch (err) {
-    console.error('❌ MongoDB Connection Error:', err.message);
-    process.exit(1); // Exit process with failure
+    if (uri) {
+      console.error('❌ MongoDB Atlas Connection Error:', err.message);
+      console.log('🔄 Attempting fallback to local MongoDB...');
+      try {
+        await mongoose.connect(localUri);
+        console.log('✅ Connected to Local MongoDB (Fallback)');
+      } catch (localErr) {
+        console.error('❌ Local MongoDB Connection Error:', localErr.message);
+        console.log('📦 Falling back to local JSON data (Offline Mode)...');
+        useJsonFallback = true;
+      }
+    } else {
+      console.error('❌ Local MongoDB Connection Error:', err.message);
+      console.log('📦 Falling back to local JSON data (Offline Mode)...');
+      useJsonFallback = true;
+    }
   }
 }

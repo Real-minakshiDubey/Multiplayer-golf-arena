@@ -11,7 +11,8 @@ export default function CodeEditor({ language, value, onChange }) {
     cpp: 'cpp',
     typescript: 'typescript',
     lua: 'lua',
-    php: 'php'
+    php: 'php',
+    bash: 'shell'
   };
 
   return (

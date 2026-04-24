@@ -21,7 +21,8 @@ const LANG_MAP = {
   cpp: 'cpp',
   typescript: 'typescript',
   lua: 'lua',
-  php: 'php'
+  php: 'php',
+  bash: 'shell'
 };
 
 export default function ReplayDetail() {

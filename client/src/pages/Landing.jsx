@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useAuth } from '../context/AuthContext';
 
 export default function Landing() {
+  const { user } = useAuth();
+  
   const features = [
     { icon: '⚡', title: 'REAL-TIME EXECUTIONS', desc: 'Compete head-to-head with live sub-millisecond leaderboard updates.' },
     { icon: '🌍', title: '10+ LANGUAGES', desc: 'JavaScript, Python, Rust, Go, Ruby, C, C++ and more.' },
@@ -39,11 +42,11 @@ export default function Landing() {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
-          <Link to="/lobby"
+          <Link to={user ? "/lobby" : "/login"}
             className="px-10 py-4 border border-dark-600 hover:border-accent-pink text-gray-400 hover:text-accent-pink transition font-bold tracking-[0.2em] text-sm rounded-sm bg-dark-800/80 backdrop-blur-sm neon-glow-pink hover:bg-accent-pink/10">
             FIND A MATCH
           </Link>
-          <Link to="/replays"
+          <Link to={user ? "/replays" : "/login"}
             className="px-10 py-4 border border-dark-600 hover:border-golf-400 text-gray-400 hover:text-golf-400 transition font-bold tracking-[0.2em] text-sm rounded-sm bg-dark-800/80 backdrop-blur-sm hover:bg-golf-400/10 hover:shadow-[0_0_15px_rgba(0,255,204,0.3)]">
             WATCH LIVE
           </Link>

@@ -6,12 +6,17 @@ import { randomUUID } from 'crypto';
 
 // Language configs mapping to lightweight Alpine Docker images
 const LANGUAGE_CONFIG = {
-  python: { image: 'python:3.10-alpine', cmd: 'python', ext: '.py' },
-  javascript: { image: 'node:20-alpine', cmd: 'node', ext: '.js' },
-  typescript: { image: 'node:20-alpine', cmd: 'node', ext: '.js' }, 
-  ruby: { image: 'ruby:3.2-alpine', cmd: 'ruby', ext: '.rb' },
-  lua: { image: 'nickblah/lua:5.4-alpine', cmd: 'lua', ext: '.lua' },
-  php: { image: 'php:8.2-cli-alpine', cmd: 'php', ext: '.php' }
+  python: { image: 'python:3.10-alpine', cmd: ['python'], ext: '.py' },
+  javascript: { image: 'node:20-alpine', cmd: ['node'], ext: '.js' },
+  typescript: { image: 'node:20-alpine', cmd: ['node'], ext: '.js' },
+  ruby: { image: 'ruby:3.2-alpine', cmd: ['ruby'], ext: '.rb' },
+  lua: { image: 'nickblah/lua:5.4-alpine', cmd: ['lua'], ext: '.lua' },
+  php: { image: 'php:8.2-cli-alpine', cmd: ['php'], ext: '.php' },
+  bash: { image: 'bash:alpine', cmd: ['bash'], ext: '.sh' },
+  go: { image: 'golang:alpine', cmd: ['go', 'run'], ext: '.go' },
+  rust: { image: 'rust:alpine', cmd: ['sh', '-c', 'rustc -o /tmp/exec "$0" && /tmp/exec'], ext: '.rs' },
+  c: { image: 'gcc:alpine', cmd: ['sh', '-c', 'gcc -o /tmp/exec "$0" && /tmp/exec'], ext: '.c' },
+  cpp: { image: 'gcc:alpine', cmd: ['sh', '-c', 'g++ -o /tmp/exec "$0" && /tmp/exec'], ext: '.cpp' }
 };
 
 export async function executeCode(code, language, input = '') {
@@ -54,7 +59,8 @@ export async function executeCode(code, language, input = '') {
         `-v`, `${filePath}:/app/${fileName}:ro`, // Mount file as read-only
         '-w', '/app',               // Set working directory
         config.image,               // Use the specific language Docker image
-        config.cmd, fileName        // Command to run inside the container
+        ...(Array.isArray(config.cmd) ? config.cmd : [config.cmd]),
+        fileName        // Command and file to run inside the container
       ];
 
       const proc = spawn('docker', dockerArgs, {
@@ -94,9 +100,9 @@ export async function executeCode(code, language, input = '') {
         if (exitCode !== 0) {
           // If the image doesn't exist locally, docker pull might fail or take too long
           if (stderr.includes('Unable to find image')) {
-             resolve({ success: false, output: stdout.trim(), error: `Docker image ${config.image} not found locally. Please run: docker pull ${config.image}` });
+            resolve({ success: false, output: stdout.trim(), error: `Docker image ${config.image} not found locally. Please run: docker pull ${config.image}` });
           } else {
-             resolve({ success: false, output: stdout.trim(), error: stderr.trim() });
+            resolve({ success: false, output: stdout.trim(), error: stderr.trim() });
           }
         } else {
           resolve({ success: true, output: stdout.trim(), error: '' });

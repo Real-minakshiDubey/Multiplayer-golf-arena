@@ -34,8 +34,12 @@ export default function Navbar() {
         {/* Landing page — always show Login + Enter Arena only */}
         {isLandingPage && (
           <div className="flex gap-4 items-center">
-            <Link to="/login" className="text-gray-400 hover:text-white transition font-mono text-sm">LOGIN</Link>
-            <Link to="/lobby" className="px-5 py-2 border border-accent-pink/50 text-accent-pink hover:bg-accent-pink/10 transition font-bold tracking-widest text-sm neon-glow-pink rounded-sm">
+            {user ? (
+              <button onClick={() => { logout(); navigate('/'); }} className="text-gray-400 hover:text-white transition font-mono text-sm uppercase">LOGOUT</button>
+            ) : (
+              <Link to="/login" className="text-gray-400 hover:text-white transition font-mono text-sm uppercase">LOGIN</Link>
+            )}
+            <Link to={user ? "/lobby" : "/login"} className="px-5 py-2 border border-accent-pink/50 text-accent-pink hover:bg-accent-pink/10 transition font-bold tracking-widest text-sm neon-glow-pink rounded-sm uppercase">
               ENTER ARENA
             </Link>
           </div>
