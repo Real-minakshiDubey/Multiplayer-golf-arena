@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { db } from '../config/db.js';
-import { authenticate } from '../middleware/auth.js';
+import { authenticate, isAdmin } from '../middleware/auth.js';
 import { v4 as uuid } from 'uuid';
 import { challenges } from '../data/challenges.js';
 
@@ -28,7 +28,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Create tournament
-router.post('/', authenticate, async (req, res) => {
+router.post('/', authenticate, isAdmin, async (req, res) => {
   try {
     const { name, description, maxPlayers = 16, roundTime = 300, numRounds = 3, startDate } = req.body;
 

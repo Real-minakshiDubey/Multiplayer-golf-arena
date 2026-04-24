@@ -3,6 +3,9 @@ import { rooms } from './index.js';
 export function handleRoom(io, socket) {
 
   socket.on('create-room', ({ roomCode, roomName, maxPlayers, roundTime, challengeId }, callback) => {
+    if (socket.user.role === 'admin') {
+      return callback({ success: false, error: 'Admins cannot create rooms for play' });
+    }
     const room = {
       code: roomCode,
       name: roomName,
@@ -31,6 +34,9 @@ export function handleRoom(io, socket) {
   });
 
   socket.on('join-room', ({ roomCode }, callback) => {
+    if (socket.user.role === 'admin') {
+      return callback({ success: false, error: 'Admins cannot join rooms as players' });
+    }
     const room = rooms.get(roomCode);
 
     if (!room) return callback({ success: false, error: 'Room not found' });

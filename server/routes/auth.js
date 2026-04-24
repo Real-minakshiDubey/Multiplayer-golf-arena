@@ -33,7 +33,7 @@ router.post('/register', async (req, res) => {
     });
 
     const token = jwt.sign(
-      { id: user.id, username, avatar },
+      { id: user.id, username, avatar, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
@@ -45,7 +45,8 @@ router.post('/register', async (req, res) => {
         username: user.username,
         email: user.email,
         avatar: user.avatar,
-        elo: user.elo
+        elo: user.elo,
+        role: user.role
       }
     });
   } catch (err) {
@@ -73,7 +74,7 @@ router.post('/login', async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user.id, username: user.username, avatar: user.avatar },
+      { id: user.id, username: user.username, avatar: user.avatar, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
@@ -86,6 +87,7 @@ router.post('/login', async (req, res) => {
         email: user.email,
         avatar: user.avatar,
         elo: user.elo,
+        role: user.role,
         games_played: user.games_played,
         games_won: user.games_won
       }

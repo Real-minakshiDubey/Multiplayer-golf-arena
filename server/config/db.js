@@ -7,6 +7,8 @@ import { Submission } from '../models/Submission.js';
 import { Room } from '../models/Room.js';
 import { Match } from '../models/Match.js';
 import { Tournament } from '../models/Tournament.js';
+import { Challenge } from '../models/Challenge.js';
+import { challenges as staticChallenges } from '../data/challenges.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DB_JSON_PATH = path.join(__dirname, '../data/db.json');
@@ -66,11 +68,12 @@ export const db = {
     if (useJsonFallback) {
       const data = getJsonData();
       return [...data.users]
+        .filter(u => u.role === 'user')
         .sort((a, b) => b.elo - a.elo)
         .slice(0, limit)
         .map(u => ({ ...u, id: u.id }));
     }
-    return await User.find({}, '-password')
+    return await User.find({ role: 'user' }, '-password')
       .sort({ elo: -1 })
       .limit(limit);
   },
@@ -136,6 +139,9 @@ export const db = {
   },
 
   async getTournaments() {
+    if (useJsonFallback) {
+      return getJsonData().tournaments || [];
+    }
     return await Tournament.find().sort({ created_at: -1 });
   },
 
@@ -145,6 +151,35 @@ export const db = {
 
   async updateTournament(id, updates) {
     return await Tournament.findByIdAndUpdate(id, updates, { new: true });
+  },
+
+  // ── CHALLENGES ──
+  async getChallenges() {
+    if (useJsonFallback) {
+      return getJsonData().challenges || [];
+    }
+    return await Challenge.find();
+  },
+
+  async getChallengeById(id) {
+    if (useJsonFallback) {
+      const data = getJsonData();
+      return data.challenges?.find(c => c.id === id);
+    }
+    return await Challenge.findOne({ id });
+  },
+
+  async createChallenge(challengeData) {
+    if (useJsonFallback) {
+      const data = getJsonData();
+      data.challenges = data.challenges || [];
+      data.challenges.push(challengeData);
+      fs.writeFileSync(DB_JSON_PATH, JSON.stringify(data, null, 2));
+      return challengeData;
+    }
+    const newChallenge = new Challenge(challengeData);
+    await newChallenge.save();
+    return newChallenge;
   }
 };
 
@@ -160,6 +195,14 @@ export async function initDB() {
       await mongoose.connect(uri);
     }
     console.log('✅ Connected to MongoDB Database');
+
+    // Auto-seed challenges if empty
+    const count = await Challenge.countDocuments();
+    if (count === 0) {
+      console.log('🌱 Seeding initial challenges to database...');
+      await Challenge.insertMany(staticChallenges);
+      console.log(`✅ Seeded ${staticChallenges.length} challenges`);
+    }
   } catch (err) {
     if (uri) {
       console.error('❌ MongoDB Atlas Connection Error:', err.message);

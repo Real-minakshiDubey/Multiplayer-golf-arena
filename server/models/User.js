@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema({
   elo: { type: Number, default: 1000 },
   games_played: { type: Number, default: 0 },
   games_won: { type: Number, default: 0 },
+  role: { type: String, enum: ['user', 'admin'], default: 'user' },
   created_at: { type: Date, default: Date.now }
 });
 

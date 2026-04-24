@@ -42,9 +42,9 @@ export default function Landing() {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
-          <Link to={user ? "/lobby" : "/login"}
+          <Link to={user ? (user.role === 'admin' ? "/challenges/create" : "/lobby") : "/login"}
             className="px-10 py-4 border border-dark-600 hover:border-accent-pink text-gray-400 hover:text-accent-pink transition font-bold tracking-[0.2em] text-sm rounded-sm bg-dark-800/80 backdrop-blur-sm neon-glow-pink hover:bg-accent-pink/10">
-            FIND A MATCH
+            {user?.role === 'admin' ? "MANAGE CHALLENGES" : "FIND A MATCH"}
           </Link>
           <Link to={user ? "/replays" : "/login"}
             className="px-10 py-4 border border-dark-600 hover:border-golf-400 text-gray-400 hover:text-golf-400 transition font-bold tracking-[0.2em] text-sm rounded-sm bg-dark-800/80 backdrop-blur-sm hover:bg-golf-400/10 hover:shadow-[0_0_15px_rgba(0,255,204,0.3)]">

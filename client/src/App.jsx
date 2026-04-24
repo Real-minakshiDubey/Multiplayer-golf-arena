@@ -14,6 +14,7 @@ import ReplayDetail from './pages/ReplayDetail'
 import Tournaments from './pages/Tournaments'
 import TournamentDetail from './pages/TournamentDetail'
 import CreateTournament from './pages/CreateTournament'
+import CreateChallenge from './pages/CreateChallenge'
 import ProtectedRoute from './components/ProtectedRoute'
 
 export default function App() {
@@ -34,6 +35,7 @@ export default function App() {
         <Route path="/replays/:matchId" element={<ProtectedRoute><ReplayDetail /></ProtectedRoute>} />
         <Route path="/tournaments" element={<Tournaments />} />
         <Route path="/tournaments/create" element={<ProtectedRoute><CreateTournament /></ProtectedRoute>} />
+        <Route path="/challenges/create" element={<ProtectedRoute><CreateChallenge /></ProtectedRoute>} />
         <Route path="/tournaments/:id" element={<TournamentDetail />} />
       </Routes>
     </div>

@@ -99,7 +99,7 @@ export default function Tournaments() {
         ))}
 
         {/* Create Tournament Button */}
-        {user && (
+        {user?.role === 'admin' && (
           <Link
             to="/tournaments/create"
             className="ml-auto px-5 py-2 rounded-sm text-xs font-bold tracking-[0.15em] border border-accent-pink/30 bg-accent-pink/10 text-accent-pink hover:bg-accent-pink/20 transition"

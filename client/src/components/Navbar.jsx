@@ -28,6 +28,7 @@ export default function Navbar() {
             <Link to="/leaderboard" className="hover:text-white transition">LEADERBOARD</Link>
             <Link to="/tournaments" className="hover:text-white transition">TOURNAMENTS</Link>
             <Link to="/replays" className="hover:text-white transition">REPLAYS</Link>
+            {user?.role === 'admin' && <Link to="/challenges/create" className="text-accent-pink hover:text-white transition">+ BUILDER</Link>}
           </div>
         )}
 
@@ -52,14 +53,17 @@ export default function Navbar() {
               <>
                 <Link to="/profile" className="flex items-center gap-2 text-gray-300 hover:text-white transition text-xs font-mono">
                   <span>{user.avatar}</span>
-                  <span>{user.username.toUpperCase()}</span>
+                  <div className="flex flex-col">
+                    <span className="font-bold">{user.username.toUpperCase()}</span>
+                    {user.role === 'admin' && <span className="text-[8px] text-accent-purple font-black tracking-widest leading-none">ARCHITECT</span>}
+                  </div>
                   <span className={`w-2 h-2 rounded-full ${connected ? 'bg-golf-400 glow-cyan' : 'bg-red-500'}`}></span>
                 </Link>
                 <button onClick={() => { logout(); navigate('/'); }} className="text-gray-500 hover:text-accent-pink transition text-xs font-mono">
                   LOGOUT
                 </button>
-                <Link to="/lobby" className="px-5 py-2 border border-accent-pink/50 text-accent-pink hover:bg-accent-pink/10 transition font-bold tracking-widest text-sm neon-glow-pink rounded-sm">
-                  ENTER ARENA
+                <Link to={user.role === 'admin' ? "/challenges/create" : "/lobby"} className="px-5 py-2 border border-accent-pink/50 text-accent-pink hover:bg-accent-pink/10 transition font-bold tracking-widest text-sm neon-glow-pink rounded-sm">
+                  {user.role === 'admin' ? "BUILDER" : "ENTER ARENA"}
                 </Link>
               </>
             ) : (
