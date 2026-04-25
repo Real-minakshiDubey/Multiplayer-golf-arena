@@ -33,8 +33,8 @@ export default function Landing() {
 
         <h1 className="text-7xl md:text-9xl font-black mb-10 leading-none flex flex-col items-center justify-center">
           <span className="text-gray-300 tracking-wider mb-2">MULTIPLAYER</span>
-          <span className="text-accent-pink tracking-widest animate-glow-pink mb-4">CODE GOLF</span>
-          <span className="text-golf-400 tracking-widest animate-glow-cyan">ARENA</span>
+          <span className="text-accent-pink tracking-widest animate-glow-pink mb-4">BYTE</span>
+          <span className="text-golf-400 tracking-widest animate-glow-cyan">BATTLE</span>
         </h1>
 
         <p className="text-gray-400 max-w-2xl mx-auto mb-16 text-lg tracking-wide leading-relaxed">

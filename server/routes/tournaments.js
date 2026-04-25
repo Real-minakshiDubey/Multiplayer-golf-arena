@@ -2,7 +2,6 @@ import { Router } from 'express';
 import { db } from '../config/db.js';
 import { authenticate, isAdmin } from '../middleware/auth.js';
 import { v4 as uuid } from 'uuid';
-import { challenges } from '../data/challenges.js';
 
 const router = Router();
 
@@ -32,8 +31,10 @@ router.post('/', authenticate, isAdmin, async (req, res) => {
   try {
     const { name, description, maxPlayers = 16, roundTime = 300, numRounds = 3, startDate } = req.body;
 
-    // Pick random challenges for rounds
-    const shuffled = [...challenges].sort(() => Math.random() - 0.5);
+    // Pick random challenges for rounds from DB
+    const allChallenges = await db.getChallenges();
+    const challengeList = allChallenges.map(c => c.toObject ? c.toObject() : c);
+    const shuffled = [...challengeList].sort(() => Math.random() - 0.5);
     const roundChallenges = shuffled.slice(0, numRounds).map(c => ({
       id: c.id,
       title: c.title,

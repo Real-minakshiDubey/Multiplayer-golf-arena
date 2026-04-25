@@ -17,8 +17,8 @@ export default function Navbar() {
         
         {/* LOGO */}
         <Link to="/" className="flex items-center gap-1 text-2xl font-black tracking-wider mono animate-pulse-fast">
-          <span className="text-accent-pink animate-glow-pink">GOLF.</span>
-          <span className="text-golf-400 animate-glow-cyan">ARENA</span>
+          <span className="text-accent-pink animate-glow-pink">BYTE.</span>
+          <span className="text-golf-400 animate-glow-cyan">BATTLE</span>
         </Link>
 
         {/* LINKS — hidden on landing & auth pages */}

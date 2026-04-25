@@ -4,9 +4,9 @@ export default {
   theme: {
     extend: {
       colors: {
-        dark: { 900: '#05050A', 800: '#101018', 700: '#1a1a2e', 600: '#252540' },
+        dark: { 950: '#020205', 900: '#05050A', 800: '#101018', 700: '#1a1a2e', 600: '#252540' },
         golf: { 400: '#00ffcc', 500: '#00ccaa', 600: '#009988' }, // Neon Cyan
-        accent: { pink: '#ff0055', purple: '#bf00ff', yellow: '#fbbf24' } // Neon Pink
+        accent: { pink: '#ff0055', purple: '#bf00ff', yellow: '#fbbf24', cyan: '#00ffcc' } // Neon Pink
       },
       animation: {
         'glow-cyan': 'glowCyan 2s ease-in-out infinite alternate',

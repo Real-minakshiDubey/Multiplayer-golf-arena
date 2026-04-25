@@ -2,6 +2,47 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  /* Default Cyberpunk Theme */
+  --bg-main: #05050A;
+  --bg-card: rgba(16, 16, 24, 0.6);
+  --text-main: #e2e8f0;
+  --text-muted: #64748b;
+  --accent-primary: #00FFCC; /* Cyan */
+  --accent-secondary: #FF0055; /* Pink */
+  --accent-purple: #A855F7;
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-glow: rgba(0, 0, 0, 0.37);
+  --grid-color: rgba(255, 255, 255, 0.03);
+}
+
+[data-theme='neon-night'] {
+  --bg-main: #0A001A;
+  --bg-card: rgba(20, 0, 40, 0.6);
+  --accent-primary: #FF00FF; /* Magenta */
+  --accent-secondary: #00FFFF; /* Cyan */
+  --accent-purple: #D8B4FE;
+  --grid-color: rgba(255, 0, 255, 0.05);
+}
+
+[data-theme='midnight-blue'] {
+  --bg-main: #020617;
+  --bg-card: rgba(15, 23, 42, 0.7);
+  --accent-primary: #38BDF8; /* Sky Blue */
+  --accent-secondary: #818CF8; /* Indigo */
+  --accent-purple: #C084FC;
+  --grid-color: rgba(56, 189, 248, 0.04);
+}
+
+[data-theme='gold-edition'] {
+  --bg-main: #0C0A09;
+  --bg-card: rgba(28, 25, 23, 0.8);
+  --accent-primary: #FDE047; /* Yellow */
+  --accent-secondary: #F97316; /* Orange */
+  --accent-purple: #FB923C;
+  --grid-color: rgba(253, 224, 71, 0.03);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -10,9 +51,10 @@
 
 body {
   font-family: 'Inter', sans-serif;
-  background: #05050A; /* Darker cyberpunk background */
-  color: #e2e8f0;
+  background: var(--bg-main);
+  color: var(--text-main);
   overflow-x: hidden;
+  transition: background 0.5s ease, color 0.5s ease;
 }
 
 code, .mono {
@@ -31,10 +73,10 @@ code, .mono {
 }
 
 .glass {
-  background: rgba(16, 16, 24, 0.6);
+  background: var(--bg-card);
   backdrop-filter: blur(16px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 32px 0 var(--glass-glow);
 }
 
 .glass-card {
@@ -51,42 +93,34 @@ code, .mono {
 }
 
 .text-gradient-golf {
-  background: linear-gradient(135deg, #00FFCC 0%, #00CCFF 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.text-gradient-gold {
-  background: linear-gradient(135deg, #FDE047 0%, #EAB308 100%);
+  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .bg-mesh {
-  background-color: #05050A;
+  background-color: var(--bg-main);
   background-image: 
-    radial-gradient(at 0% 0%, rgba(0, 255, 204, 0.05) 0px, transparent 50%),
-    radial-gradient(at 100% 0%, rgba(255, 0, 85, 0.05) 0px, transparent 50%);
-}
-
-.podium-1 {
-  background: linear-gradient(180deg, rgba(253, 224, 71, 0.15) 0%, transparent 100%);
-  border-top: 2px solid #FDE047;
-}
-
-.podium-2 {
-  background: linear-gradient(180deg, rgba(226, 232, 240, 0.1) 0%, transparent 100%);
-  border-top: 2px solid #E2E8F0;
-}
-
-.podium-3 {
-  background: linear-gradient(180deg, rgba(249, 115, 22, 0.1) 0%, transparent 100%);
-  border-top: 2px solid #F97316;
+    radial-gradient(at 0% 0%, var(--accent-primary) 0.05, transparent 50%),
+    radial-gradient(at 100% 0%, var(--accent-secondary) 0.05, transparent 50%);
 }
 
 .bg-grid {
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    linear-gradient(var(--grid-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
   background-size: 50px 50px;
 }
+
+/* Utils for dynamic colors */
+.text-golf-400 { color: var(--accent-primary); }
+.bg-golf-400 { background-color: var(--accent-primary); }
+.border-golf-400 { border-color: var(--accent-primary); }
+
+.text-accent-pink { color: var(--accent-secondary); }
+.bg-accent-pink { background-color: var(--accent-secondary); }
+.border-accent-pink { border-color: var(--accent-secondary); }
+
+.text-accent-purple { color: var(--accent-purple); }
+.bg-accent-purple { background-color: var(--accent-purple); }
+.border-accent-purple { border-color: var(--accent-purple); }

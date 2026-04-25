@@ -2,7 +2,6 @@ import { Router } from 'express';
 import { db } from '../config/db.js';
 import { authenticate } from '../middleware/auth.js';
 import { validateSolution } from '../services/codeExecutor.js';
-import { challenges } from '../data/challenges.js';
 import { v4 as uuid } from 'uuid';
 
 const router = Router();
@@ -41,12 +40,13 @@ router.get('/best/:challengeId', authenticate, async (req, res) => {
 router.post('/practice', authenticate, async (req, res) => {
   const { code, language, challengeId } = req.body;
 
-  const challenge = challenges.find(c => c.id === challengeId);
+  const challenge = await db.getChallengeById(challengeId);
   if (!challenge) return res.status(404).json({ error: 'Challenge not found' });
+  const challengeObj = challenge.toObject ? challenge.toObject() : challenge;
 
   try {
     const { allPassed, results } = await validateSolution(
-      code, language, challenge.testCases
+      code, language, challengeObj.testCases
     );
 
     const charCount = code.replace(/\s/g, '').length;
@@ -77,11 +77,12 @@ router.post('/practice', authenticate, async (req, res) => {
 router.post('/run', authenticate, async (req, res) => {
   const { code, language, challengeId } = req.body;
 
-  const challenge = challenges.find(c => c.id === challengeId);
+  const challenge = await db.getChallengeById(challengeId);
   if (!challenge) return res.status(404).json({ error: 'Challenge not found' });
+  const challengeObj = challenge.toObject ? challenge.toObject() : challenge;
 
   try {
-    const exampleTests = challenge.examples.map(e => ({
+    const exampleTests = challengeObj.examples.map(e => ({
       input: e.input,
       expected: e.output
     }));

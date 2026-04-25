@@ -1,19 +1,11 @@
-import mongoose from 'mongoose';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { User } from '../models/User.js';
-import { Submission } from '../models/Submission.js';
-import { Room } from '../models/Room.js';
-import { Match } from '../models/Match.js';
-import { Tournament } from '../models/Tournament.js';
-import { Challenge } from '../models/Challenge.js';
-import { challenges as staticChallenges } from '../data/challenges.js';
+import { v4 as uuid } from 'uuid';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DB_JSON_PATH = path.join(__dirname, '../data/db.json');
 
-let useJsonFallback = false;
 let localJsonData = null;
 
 function getJsonData() {
@@ -24,201 +16,251 @@ function getJsonData() {
     return localJsonData;
   } catch (err) {
     console.error('❌ Failed to read db.json:', err.message);
-    return { users: [], submissions: [], rooms: [], matches: [], tournaments: [] };
+    localJsonData = { users: [], submissions: [], rooms: [], matches: [], tournaments: [], challenges: [] };
+    return localJsonData;
   }
+}
+
+function saveData() {
+  const data = getJsonData();
+  fs.writeFileSync(DB_JSON_PATH, JSON.stringify(data, null, 2));
 }
 
 export const db = {
   // ── USERS ──
-  async findUserByEmail(email) {
-    return await User.findOne({ email });
-  },
-
   async findUserById(id) {
-    if (useJsonFallback) {
-      const data = getJsonData();
-      return data.users.find(u => u.id === id);
-    }
-    return await User.findById(id);
+    const data = getJsonData();
+    return data.users.find(u => u.id === id);
   },
 
   async findUserByUsername(username) {
-    return await User.findOne({ username });
+    const data = getJsonData();
+    return data.users.find(u => u.username === username);
+  },
+
+  async findUserByEmail(email) {
+    const data = getJsonData();
+    return data.users.find(u => u.email === email);
   },
 
   async findUserByUsernameOrEmail(username, email) {
-    return await User.findOne({ $or: [{ username }, { email }] });
+    const data = getJsonData();
+    return data.users.find(u => u.username === username || u.email === email);
   },
 
-  async createUser(user) {
-    const newUser = new User(user);
-    await newUser.save();
+  async createUser(userData) {
+    const data = getJsonData();
+    const newUser = { 
+      ...userData, 
+      id: userData.id || uuid(), 
+      elo: 1000, 
+      games_played: 0, 
+      games_won: 0, 
+      role: userData.role || 'user',
+      created_at: new Date().toISOString() 
+    };
+    data.users.push(newUser);
+    saveData();
     return newUser;
   },
 
   async updateUser(id, updates) {
-    return await User.findByIdAndUpdate(id, updates, { new: true });
+    const data = getJsonData();
+    const index = data.users.findIndex(u => u.id === id);
+    if (index !== -1) {
+      data.users[index] = { ...data.users[index], ...updates };
+      saveData();
+      return data.users[index];
+    }
+    return null;
   },
 
   async incrementUserField(id, field, amount = 1) {
-    return await User.findByIdAndUpdate(id, { $inc: { [field]: amount } });
+    const data = getJsonData();
+    const index = data.users.findIndex(u => u.id === id);
+    if (index !== -1) {
+      data.users[index][field] = (data.users[index][field] || 0) + amount;
+      saveData();
+      return data.users[index];
+    }
+    return null;
+  },
+
+  async recordEloChange(id, newElo) {
+    const data = getJsonData();
+    const user = data.users.find(u => u.id === id);
+    if (user) {
+      user.elo = newElo;
+      user.elo_history = user.elo_history || [];
+      user.elo_history.push({ elo: newElo, timestamp: new Date().toISOString() });
+      saveData();
+    }
+    return user;
   },
 
   async getLeaderboard(limit = 50) {
-    if (useJsonFallback) {
-      const data = getJsonData();
-      return [...data.users]
-        .filter(u => u.role === 'user')
-        .sort((a, b) => b.elo - a.elo)
-        .slice(0, limit)
-        .map(u => ({ ...u, id: u.id }));
-    }
-    return await User.find({ role: 'user' }, '-password')
-      .sort({ elo: -1 })
-      .limit(limit);
+    const data = getJsonData();
+    return [...data.users]
+      .filter(u => !u.role || u.role === 'user')
+      .sort((a, b) => b.elo - a.elo)
+      .slice(0, limit)
+      .map(u => ({ ...u, id: u.id }));
   },
 
   // ── SUBMISSIONS ──
-  async createSubmission(submission) {
-    const newSub = new Submission(submission);
-    await newSub.save();
+  async createSubmission(submissionData) {
+    const data = getJsonData();
+    data.submissions = data.submissions || [];
+    const newSub = { 
+      ...submissionData, 
+      id: uuid(), 
+      created_at: new Date().toISOString() 
+    };
+    data.submissions.push(newSub);
+    saveData();
     return newSub;
   },
 
   async getSubmissionsByUser(userId) {
-    return await Submission.find({ user_id: userId });
+    const data = getJsonData();
+    return data.submissions?.filter(s => s.user_id === userId) || [];
   },
 
   async getBestSubmission(userId, challengeId) {
-    return await Submission.findOne({ user_id: userId, challenge_id: challengeId, passed: true })
-      .sort({ char_count: 1 });
+    const data = getJsonData();
+    const subs = data.submissions?.filter(s => s.user_id === userId && s.challenge_id === challengeId && s.passed) || [];
+    return subs.sort((a, b) => a.char_count - b.char_count)[0] || null;
   },
 
   async getSolvedChallengeIds(userId) {
-    const solved = await Submission.find({ user_id: userId, passed: true }).select('challenge_id');
+    const data = getJsonData();
+    const solved = data.submissions?.filter(s => s.user_id === userId && s.passed) || [];
     return [...new Set(solved.map(s => s.challenge_id))];
   },
 
   // ── ROOMS ──
   async createRoom(room) {
-    const newRoom = new Room(room);
-    await newRoom.save();
+    const data = getJsonData();
+    data.rooms = data.rooms || [];
+    const newRoom = {
+      ...room,
+      id: uuid(),
+      status: room.status || 'waiting',
+      created_at: new Date().toISOString()
+    };
+    data.rooms.push(newRoom);
+    saveData();
     return newRoom;
   },
 
   async getWaitingRooms() {
-    return await Room.find({ status: 'waiting' });
+    const data = getJsonData();
+    return (data.rooms || []).filter(r => r.status === 'waiting');
   },
 
   async updateRoom(id, updates) {
-    return await Room.findByIdAndUpdate(id, updates, { new: true });
+    const data = getJsonData();
+    const index = (data.rooms || []).findIndex(r => r.id === id);
+    if (index !== -1) {
+      data.rooms[index] = { ...data.rooms[index], ...updates };
+      saveData();
+      return data.rooms[index];
+    }
+    return null;
   },
 
   // ── MATCHES ──
   async createMatch(match) {
-    const newMatch = new Match(match);
-    await newMatch.save();
+    const data = getJsonData();
+    data.matches = data.matches || [];
+    const newMatch = {
+      ...match,
+      id: uuid(),
+      created_at: new Date().toISOString()
+    };
+    data.matches.push(newMatch);
+    saveData();
     return newMatch;
   },
 
   async getMatches(limit = 20) {
-    return await Match.find()
-      .sort({ created_at: -1 })
-      .limit(limit);
+    const data = getJsonData();
+    return [...(data.matches || [])]
+      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+      .slice(0, limit);
   },
 
   async getMatchById(id) {
-    return await Match.findById(id);
+    const data = getJsonData();
+    return (data.matches || []).find(m => m.id === id);
   },
 
   // ── TOURNAMENTS ──
   async createTournament(tournament) {
-    const newTournament = new Tournament(tournament);
-    await newTournament.save();
+    const data = getJsonData();
+    data.tournaments = data.tournaments || [];
+    const newTournament = {
+      ...tournament,
+      id: uuid(),
+      created_at: new Date().toISOString()
+    };
+    data.tournaments.push(newTournament);
+    saveData();
     return newTournament;
   },
 
   async getTournaments() {
-    if (useJsonFallback) {
-      return getJsonData().tournaments || [];
-    }
-    return await Tournament.find().sort({ created_at: -1 });
+    const data = getJsonData();
+    return [...(data.tournaments || [])]
+      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
   },
 
   async getTournamentById(id) {
-    return await Tournament.findById(id);
+    const data = getJsonData();
+    return (data.tournaments || []).find(t => t.id === id);
   },
 
   async updateTournament(id, updates) {
-    return await Tournament.findByIdAndUpdate(id, updates, { new: true });
+    const data = getJsonData();
+    const index = (data.tournaments || []).findIndex(t => t.id === id);
+    if (index !== -1) {
+      data.tournaments[index] = { ...data.tournaments[index], ...updates };
+      saveData();
+      return data.tournaments[index];
+    }
+    return null;
   },
 
   // ── CHALLENGES ──
   async getChallenges() {
-    if (useJsonFallback) {
-      return getJsonData().challenges || [];
-    }
-    return await Challenge.find();
+    return getJsonData().challenges || [];
   },
 
   async getChallengeById(id) {
-    if (useJsonFallback) {
-      const data = getJsonData();
-      return data.challenges?.find(c => c.id === id);
-    }
-    return await Challenge.findOne({ id });
+    const data = getJsonData();
+    return data.challenges?.find(c => c.id === id);
   },
 
   async createChallenge(challengeData) {
-    if (useJsonFallback) {
-      const data = getJsonData();
-      data.challenges = data.challenges || [];
-      data.challenges.push(challengeData);
-      fs.writeFileSync(DB_JSON_PATH, JSON.stringify(data, null, 2));
-      return challengeData;
-    }
-    const newChallenge = new Challenge(challengeData);
-    await newChallenge.save();
-    return newChallenge;
+    const data = getJsonData();
+    data.challenges = data.challenges || [];
+    data.challenges.push(challengeData);
+    saveData();
+    return challengeData;
+  },
+
+  async deleteChallenge(id) {
+    const data = getJsonData();
+    const index = data.challenges?.findIndex(c => c.id === id);
+    if (index === -1 || index === undefined) return null;
+    const deleted = data.challenges.splice(index, 1)[0];
+    saveData();
+    return deleted;
   }
 };
 
 export async function initDB() {
-  const uri = process.env.MONGO_URI;
-  const localUri = 'mongodb://localhost:27017/golf-arena';
-  
-  try {
-    if (!uri) {
-      console.warn('⚠️ MONGO_URI is missing in .env. Using local MongoDB.');
-      await mongoose.connect(localUri);
-    } else {
-      await mongoose.connect(uri);
-    }
-    console.log('✅ Connected to MongoDB Database');
-
-    // Auto-seed challenges if empty
-    const count = await Challenge.countDocuments();
-    if (count === 0) {
-      console.log('🌱 Seeding initial challenges to database...');
-      await Challenge.insertMany(staticChallenges);
-      console.log(`✅ Seeded ${staticChallenges.length} challenges`);
-    }
-  } catch (err) {
-    if (uri) {
-      console.error('❌ MongoDB Atlas Connection Error:', err.message);
-      console.log('🔄 Attempting fallback to local MongoDB...');
-      try {
-        await mongoose.connect(localUri);
-        console.log('✅ Connected to Local MongoDB (Fallback)');
-      } catch (localErr) {
-        console.error('❌ Local MongoDB Connection Error:', localErr.message);
-        console.log('📦 Falling back to local JSON data (Offline Mode)...');
-        useJsonFallback = true;
-      }
-    } else {
-      console.error('❌ Local MongoDB Connection Error:', err.message);
-      console.log('📦 Falling back to local JSON data (Offline Mode)...');
-      useJsonFallback = true;
-    }
-  }
+  // Load JSON data on startup
+  const data = getJsonData();
+  console.log(`📦 Local JSON Database loaded — ${data.users?.length || 0} users, ${data.challenges?.length || 0} challenges, ${data.matches?.length || 0} matches`);
 }

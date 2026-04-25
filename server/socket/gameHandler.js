@@ -1,25 +1,31 @@
 import { rooms } from './index.js';
-import { challenges } from '../data/challenges.js';
-import { validateSolution } from '../services/codeExecutor.js';
 import { db } from '../config/db.js';
+import { validateSolution } from '../services/codeExecutor.js';
 import { v4 as uuid } from 'uuid';
 
 export function handleGame(io, socket) {
 
-  socket.on('start-game', ({ roomCode }) => {
+  socket.on('start-game', async ({ roomCode }) => {
     const room = rooms.get(roomCode);
     if (!room) return;
     if (room.host.id !== socket.user.id) return;
     if (room.players.length < 1) return;
 
-    // Use locked challenge if set, otherwise pick random
+    // Use locked challenge if set, otherwise pick random from DB
     let challenge;
     if (room.challengeId) {
-      challenge = challenges.find(c => c.id === room.challengeId);
+      challenge = await db.getChallengeById(room.challengeId);
     }
     if (!challenge) {
-      challenge = challenges[Math.floor(Math.random() * challenges.length)];
+      const allChallenges = await db.getChallenges();
+      if (allChallenges.length === 0) {
+        socket.emit('error', { message: 'No challenges available. Ask an admin to create some!' });
+        return;
+      }
+      challenge = allChallenges[Math.floor(Math.random() * allChallenges.length)];
     }
+    // Normalize to plain object
+    challenge = challenge.toObject ? challenge.toObject() : challenge;
     room.challenge = challenge;
     room.status = 'playing';
     room.startTime = Date.now();
@@ -202,7 +208,12 @@ async function endGame(io, room, roomCode) {
   if (leaderboard.length > 0 && leaderboard[0].solved) {
     const winnerId = leaderboard[0].userId;
     await db.incrementUserField(winnerId, 'games_won', 1);
-    await db.incrementUserField(winnerId, 'elo', 25);
+    
+    // Fetch current user to get their elo before update
+    const winner = await db.findUserById(winnerId);
+    if (winner) {
+      await db.recordEloChange(winnerId, (winner.elo || 1000) + 25);
+    }
   }
 
   for (const player of room.players) {

@@ -68,4 +68,15 @@ router.post('/', authenticate, isAdmin, async (req, res) => {
   }
 });
 
+// Delete a challenge (admin only)
+router.delete('/:id', authenticate, isAdmin, async (req, res) => {
+  try {
+    const deleted = await db.deleteChallenge(req.params.id);
+    if (!deleted) return res.status(404).json({ error: 'Challenge not found' });
+    res.json({ message: 'Challenge deleted', id: req.params.id });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 export default router;

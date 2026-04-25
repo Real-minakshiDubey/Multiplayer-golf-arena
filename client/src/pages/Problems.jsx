@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import api from '../utils/api';
+import toast from 'react-hot-toast';
 
 const DIFFICULTY_COLORS = {
   easy: { bg: 'bg-green-500/10', border: 'border-green-500/30', text: 'text-green-400' },
@@ -13,6 +14,7 @@ const DIFFICULTY_COLORS = {
 const CATEGORIES = [
   { id: 'all', label: 'ALL' },
   { id: 'arrays', label: 'ARRAYS', icon: '📊' },
+  { id: 'hashing', label: 'HASHING', icon: '🔑' },
   { id: 'two-pointers', label: 'TWO POINTERS', icon: '👈👉' },
   { id: 'sliding-window', label: 'SLIDING WINDOW', icon: '🪟' },
   { id: 'stack-queue', label: 'STACK / QUEUE', icon: '📚' },
@@ -51,6 +53,19 @@ export default function Problems() {
       console.error('Failed to load challenges');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async (e, challengeId, title) => {
+    e.preventDefault(); // prevent Link navigation
+    e.stopPropagation();
+    if (!window.confirm(`Delete "${title}"? This cannot be undone.`)) return;
+    try {
+      await api.delete(`/challenges/${challengeId}`);
+      setChallenges(prev => prev.filter(c => c.id !== challengeId));
+      toast.success(`Deleted "${title}"`);
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Failed to delete');
     }
   };
 
@@ -183,6 +198,17 @@ export default function Problems() {
                       <div className="absolute top-3 right-3 w-6 h-6 rounded-full bg-green-500/20 border border-green-500/40 flex items-center justify-center text-green-400 text-xs">
                         ✓
                       </div>
+                    )}
+
+                    {/* Admin Delete Button */}
+                    {user?.role === 'admin' && (
+                      <button
+                        onClick={(e) => handleDelete(e, challenge.id, challenge.title)}
+                        className="absolute top-3 right-3 w-7 h-7 rounded-sm bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400 text-xs hover:bg-red-500/30 transition opacity-0 group-hover:opacity-100"
+                        title="Delete challenge"
+                      >
+                        ✕
+                      </button>
                     )}
 
                     {/* Tags Row */}
